@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MathBot | Cálculo y Precálculo</title>
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjs@13.2.0/lib/browser/math.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#202b3c;background:linear-gradient(#ffffff4a,#ffffff4a),url('fondo_matematicas.png') center/cover fixed}
+.wrap{max-width:1000px;margin:24px auto;padding:0 14px}header{background:#17365d;color:#fff;padding:24px;border-radius:16px 16px 0 0}h1{margin:0 0 6px;font-size:36px}header p{margin:0;color:#e5efff;line-height:1.5}main{background:#ffffffef;padding:24px;border-radius:0 0 16px 16px;box-shadow:0 10px 35px #152c4730}
+label{display:block;font-weight:bold;color:#17365d;margin:10px 0}.row{display:flex;gap:8px}input,select{min-width:0;flex:1;padding:13px;border:1px solid #b7c7dc;border-radius:9px;font-size:16px}button{border:0;border-radius:9px;padding:11px 13px;background:#245da8;color:white;font-weight:bold;cursor:pointer}button:hover{background:#17477f}.hint{font-size:13px;color:#536174;line-height:1.5;margin-top:8px}
+.buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:15px 0}.buttons button{background:#eaf1fb;color:#17365d;border:1px solid #cbd9ed}.buttons button:hover{background:#d9e7fb}
+.examples{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 20px}.example{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;background:#fff;color:#20344e;border:1px solid #d4dfef;padding:12px;border-radius:10px}.example:hover{background:#f0f6ff}.example span{display:block}.example small{display:block;color:#65758b;font-weight:normal;margin-top:4px}.example b{font-size:14px}.example .use{font-size:12px;color:#245da8;white-space:nowrap}
+h2{font-size:19px;color:#17365d;margin:20px 0 10px}#result{white-space:pre-wrap;overflow-wrap:anywhere;min-height:150px;max-height:350px;overflow:auto;background:#f7faff;border:1px solid #d4dfef;border-radius:10px;padding:16px;line-height:1.6}#plot{min-height:300px;margin-top:12px;background:#fff;border-radius:10px}
+.practice{border:1px solid #cbd9ed;background:#fff;border-radius:10px;padding:14px;margin-top:14px}footer{text-align:center;color:#536174;font-size:12px;padding-top:18px;line-height:1.6}.section-note{font-size:13px;color:#536174;line-height:1.5}
+@media(max-width:650px){.wrap{margin:10px auto;padding:0 8px}main{padding:15px}.row{flex-direction:column}.buttons{grid-template-columns:repeat(2,1fr)}.examples{grid-template-columns:1fr}h1{font-size:30px}}
+</style></head>
+<body><div class="wrap"><header><h1>MathBot</h1><p>Asistente virtual de cálculo y precálculo · Aprende paso a paso</p></header>
+<main>
+<p>Escribe un ejercicio o selecciona uno de los ejemplos resueltos para comenzar.</p>
+<label for="expr">¿Qué ejercicio quieres resolver?</label><div class="row"><input id="expr" placeholder="Ejemplo: x^3 - 6*x^2 + 9*x + 1"><button id="solve">Resolver</button></div>
+<div class="hint">Usa x como variable. Puedes escribir x^2 o x**2. Para multiplicar usa *, por ejemplo 2*x + 5 = 17. Funciones: sin(x), cos(x), tan(x), sqrt(x), log(x), exp(x).</div>
+<div class="buttons"><button data-act="solve">Resolver ecuación</button><button data-act="factor">Factorizar</button><button data-act="derive">Derivar</button><button data-act="integrate">Integrar</button><button data-act="limit">Límite x → 0</button><button data-act="simplify">Simplificar</button><button data-act="graph">Graficar función</button><button data-act="practice">Generar práctica</button></div>
+
+<h2>Ejemplos de cálculo</h2>
+<p class="section-note">Hay 10 ejemplos para probar. Pulsa “Usar ejemplo” y después selecciona la operación indicada.</p>
+<div class="examples">
+<button class="example" data-ex="2*x + 5 = 17" data-action="solve"><span><b>1. Ecuación lineal</b><small>2x + 5 = 17 · Resolver ecuación</small></span><span class="use">Usar ejemplo →</span></button>
+<button class="example" data-ex="x^2 - 5*x + 6" data-action="factor"><span><b>2. Factorización</b><small>x² − 5x + 6 · Factorizar</small></span><span class="use">Usar ejemplo →</span></button>
+<button class="example" data-ex="x^3 - 6*x^2 + 9*x + 1" data-action="derive"><span><b>3. Derivada de cúbica</b><small>x³ − 6x² + 9x + 1 · Derivar</small></span><span class="use">Usar ejemplo →</span></button>
+<button class="example" data-ex="3*x^2 + 2*x" data-action="integrate"><span><b>4. Integral indefinida</b><small>3x² + 2x · Integrar</small></span><span class="use">Usar ejemplo →</span></button>
+<button class="example" data-ex="sin(x)/x" data-action="limit"><span><b>5. Límite notable</b><small>sin(x)/x cuando x → 0 · Límite</small></span><span class="use">Usar ejemplo →</span></button>
+<button class="example" data-ex="(x^2 - 9)/(x - 3)" data-action="simplify"><span><b>6. Simplificación</b><small>(x² − 9)/(x − 3) · Simplificar</small></span><span class="use">Usar ejemplo →</span></button>
+<button class="example" data-ex="x^2 - 5*x + 6 = 0" data-action="solve"><span><b>7. Ecuación cuadrática</b><small>x² − 5x + 6 = 0 · Resolver</small></span><span class="use">Usar ejemplo →</span></button>
+<button class="example" data-ex="x^2 - 4" data-action="graph"><span><b>8. Gráfica parabólica</b><small>f(x) = x² − 4 · Graficar</small></span><span class="use">Usar ejemplo →</span></button>
+<button class="example" data-ex="cos(x) + sin(x)" data-action="derive"><span><b>9. Funciones trigonométricas</b><small>sin(x) + cos(x) · Derivar</small></span><span class="use">Usar ejemplo →</span></button>
+<button class="example" data-ex="sqrt(x + 4)" data-action="simplify"><span><b>10. Función con raíz</b><small>√(x + 4) · Simplificar</small></span><span class="use">Usar ejemplo →</span></button>
+</div>
+
+<h2>Procedimiento y respuesta</h2><div id="result" role="status" aria-live="polite">¡Hola! Soy MathBot.\n\nSelecciona uno de los 10 ejemplos o escribe tu propio ejercicio.</div><div id="plot"></div>
+<section class="practice" id="practice" hidden><h2>Práctica rápida</h2><p id="question"></p><div class="row"><input id="answer" placeholder="Escribe tu respuesta"><button id="check">Comprobar</button></div><p id="feedback"></p></section>
+<footer>Integrantes: __________________________ y __________________________<br>Asignatura: Cálculo y Precálculo · Universidad Mariano Gálvez de Guatemala</footer>
+</main></div>
+<script>
+const $=id=>document.getElementById(id);let current=null;
+function show(s){$('result').textContent=s}
+function get(){let s=$('expr').value.trim().replace(/π/g,'pi').replace(/\*\*/g,'^');if(!s)throw Error('Escribe una expresión matemática primero.');return s}
+function sym(s){return nerdamer(s).toString()}
+function solveEquation(raw){
+  const parts=raw.split('=');
+  if(parts.length!==2||!parts[0].trim()||!parts[1].trim())throw Error('Escribe una ecuación como 2*x + 5 = 17.');
+  const diff=`(${parts[0]})-(${parts[1]})`;
+  // Use the symbolic solver when available; use math.js numeric coefficients for linear equations as fallback.
+  try {
+    if(typeof nerdamer.solveEquations==='function') {
+      const r=nerdamer.solveEquations(diff,'x');
+      if(r!==undefined&&r!==null) return JSON.stringify(r);
+    }
+  } catch(e) {}
+  const simplified=math.simplify(diff).toString();
+  const linear=math.simplify(simplified);
+  const poly=math.parse(simplified);
+  // Numeric linear fallback: evaluate f(0), f(1), derive ax+b from values.
+  const f0=math.evaluate(simplified,{x:0}), f1=math.evaluate(simplified,{x:1});
+  const a=f1-f0,b=f0;
+  if(Math.abs(a)>1e-10)return `x = ${math.format(-b/a,{precision:12})}`;
+  if(Math.abs(b)<1e-10)return 'Todos los valores de x (identidad)';
+  return 'Sin solución';
+}
+function run(a){$('practice').hidden=true;try{let s=get(),r;
+if(a==='solve'){r=solveEquation(s);show(`OPERACIÓN: Resolver ecuación\n\n1. Ecuación original: ${s}\n\n2. Pasamos todos los términos al lado izquierdo y los igualamos a cero.\n\n3. Despejamos la variable x.\n\nRESPUESTA:\n${r}\n\nNota: para ecuaciones no lineales, verifica la solución obtenida.`)}
+else if(a==='factor'){r=sym(`factor(${s})`);show(`OPERACIÓN: Factorización\n\n1. Expresión original: ${s}\n2. Buscamos factores cuyo producto sea la expresión original.\n\nRESPUESTA: ${r}`)}
+else if(a==='derive'){r=sym(`diff(${s},x)`);show(`OPERACIÓN: Derivada\n\n1. Función original: f(x) = ${s}\n2. Aplicamos las reglas de derivación respecto de x.\n\nRESPUESTA: f'(x) = ${r}`)}
+else if(a==='integrate'){r=sym(`integrate(${s},x)`);show(`OPERACIÓN: Integral indefinida\n\n1. Función original: ${s}\n2. Buscamos una función cuya derivada sea la expresión original.\n\nRESPUESTA: ∫ f(x) dx = ${r} + C`)}
+else if(a==='limit'){r=sym(`limit(${s},x,0)`);show(`OPERACIÓN: Límite cuando x tiende a 0\n\nFunción: ${s}\nAnalizamos el comportamiento cuando x se acerca a 0.\n\nRESPUESTA: lim(x→0) f(x) = ${r}`)}
+else if(a==='simplify'){r=sym(`simplify(${s})`);show(`OPERACIÓN: Simplificación\n\nExpresión original: ${s}\nReducimos y simplificamos la expresión.\n\nRESPUESTA: ${r}`)}
+else if(a==='graph'){let e=s.includes('=')?s.split('=').slice(0,1)[0]:s;let fn=math.compile(e),xs=[],ys=[];for(let i=0;i<=400;i++){let x=-10+i*.05;xs.push(x);try{let y=fn.evaluate({x});ys.push(typeof y==='number'&&Number.isFinite(y)&&Math.abs(y)<1e6?y:null)}catch{ys.push(null)}}Plotly.newPlot('plot',[{x:xs,y:ys,type:'scatter',mode:'lines',name:e}],{title:`Gráfica de f(x) = ${e}`,xaxis:{title:'x'},yaxis:{title:'f(x)'},margin:{t:50,l:50,r:15,b:45}},{responsive:true});show(`REPRESENTACIÓN GRÁFICA\n\nFunción: f(x) = ${e}\n\nSe muestra la gráfica aproximadamente entre -10 y 10. Observa intersecciones, crecimiento y decrecimiento.`)}
+else if(a==='practice')practice();
+}catch(e){show(`No se pudo resolver el ejercicio.\n\n${e.message||e}\n\nRevisa la expresión. Ejemplo: x^2 - 4 o 2*x + 5 = 17.`)}}
+function practice(){let ps=[{q:'Deriva: x^3 - 4*x',a:'3*x^2-4',h:'La derivada de x^n es n*x^(n-1).'},{q:'Factoriza: x^2 - 5*x + 6',a:'(x-2)*(x-3)',h:'Busca dos números que multipliquen 6 y sumen -5.'},{q:'Resuelve: 2*x + 6 = 14',a:'4',h:'Resta 6 y divide entre 2.'},{q:'Integra: 2*x',a:'x^2',h:'La integral es x² + C; omite C.'},{q:'Simplifica: (x^2 - 4)/(x - 2)',a:'x+2',h:'Usa diferencia de cuadrados.'}];current=ps[Math.floor(Math.random()*ps.length)];$('question').textContent=current.q;$('answer').value='';$('feedback').textContent='';$('practice').hidden=false;show('Se generó una práctica. Escribe tu respuesta y compruébala.')}
+$('solve').onclick=()=>{let s=$('expr').value;run(s.includes('=')?'solve':'simplify')};
+document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>run(b.dataset.act));
+document.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>{$('expr').value=b.dataset.ex;$('expr').focus();if(b.dataset.action)run(b.dataset.action)});
+$('expr').addEventListener('keydown',e=>{if(e.key==='Enter')$('solve').click()});
+$('check').onclick=()=>{if(!current)return;try{let d=nerdamer(`simplify((${ $('answer').value })-(${current.a}))`).toString(),ok=d==='0';$('feedback').textContent=ok?'¡Correcto! Muy bien.':`Todavía no. Pista: ${current.h}`;$('feedback').style.color=ok?'#16803c':'#a33a22'}catch{$('feedback').textContent=`No pude interpretar la respuesta. Pista: ${current.h}`}};
+</script></body></html>
